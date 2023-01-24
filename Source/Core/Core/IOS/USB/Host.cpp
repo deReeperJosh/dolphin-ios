@@ -22,6 +22,7 @@
 #include "Core/Config/MainSettings.h"
 #include "Core/Core.h"
 #include "Core/IOS/USB/Common.h"
+#include "Core/IOS/USB/Emulated/Infinity.h"
 #include "Core/IOS/USB/Emulated/Skylander.h"
 #include "Core/IOS/USB/LibusbDevice.h"
 #include "Core/NetPlayProto.h"
@@ -198,6 +199,19 @@ void USBHost::AddEmulatedDevices(std::set<u64>& new_devices, DeviceChangeHooks& 
       if (AddDevice(std::move(skylanderportal)) || always_add_hooks)
       {
         hooks.emplace(GetDeviceById(skyid), ChangeEvent::Inserted);
+      }
+    }
+  }
+  if (Config::Get(Config::MAIN_EMULATE_INFINITY_BASE) && !NetPlay::IsNetPlayRunning())
+  {
+    auto infinity_base = std::make_unique<USB::InfinityUSB>(m_ios, "Infinity Base");
+    if (ShouldAddDevice(*infinity_base))
+    {
+      const u64 infinityid = infinity_base->GetId();
+      new_devices.insert(infinityid);
+      if (AddDevice(std::move(infinity_base)) || always_add_hooks)
+      {
+        hooks.emplace(GetDeviceById(infinityid), ChangeEvent::Inserted);
       }
     }
   }
