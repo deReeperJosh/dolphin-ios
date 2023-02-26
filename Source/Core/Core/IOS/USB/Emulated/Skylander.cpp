@@ -1234,6 +1234,11 @@ bool SkylanderPortal::CreateSkylander(const std::string& file_path, u16 sky_id, 
   return true;
 }
 
+bool SkylanderPortal::RemoveSkylanderiOS(u8 sky_num)
+{
+  return Core::System::GetInstance().GetSkylanderPortal().RemoveSkylander(sky_num);
+}
+
 bool SkylanderPortal::RemoveSkylander(u8 sky_num)
 {
   if (!IsSkylanderNumberValid(sky_num))
@@ -1258,6 +1263,11 @@ bool SkylanderPortal::RemoveSkylander(u8 sky_num)
   }
 
   return false;
+}
+
+u8 SkylanderPortal::LoadSkylanderiOS(u8* buf, File::IOFile in_file)
+{
+  return Core::System::GetInstance().GetSkylanderPortal().LoadSkylander(buf, std::move(in_file));
 }
 
 u8 SkylanderPortal::LoadSkylander(u8* buf, File::IOFile in_file)
