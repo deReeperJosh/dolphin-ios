@@ -20,7 +20,6 @@
 #include "Core/HW/SI/SI.h"
 #include "Core/HW/Sram.h"
 #include "Core/HW/VideoInterface.h"
-#include "Core/PowerPC/PowerPC.h"
 #include "IOS/USB/Emulated/Infinity.h"
 #include "IOS/USB/Emulated/Skylander.h"
 #include "VideoCommon/CommandProcessor.h"
