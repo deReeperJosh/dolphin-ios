@@ -152,6 +152,12 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
       
         [self.navigationController setNavigationBarHidden:true animated:true];
       }]
+    ]],
+    [UIMenu menuWithTitle:DOLCoreLocalizedString(@"Tools") image:nil identifier:nil options:UIMenuOptionsDisplayInline
+                 children:@[
+        [UIAction actionWithTitle:DOLCoreLocalizedString(@"Skylanders Portal") image:[UIImage systemImageNamed:@"externalDrive"] identifier:nil handler:^(UIAction*) {
+        
+    }]
     ]]
   ]];
 }
@@ -194,6 +200,10 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
   }
   
   return true;
+}
+
+- (bool)emulateSkylanderPortal {
+  return Config::Get(Config::MAIN_EMULATE_SKYLANDER_PORTAL);
 }
 
 - (bool)isGameCubeTouchPadAttached {
