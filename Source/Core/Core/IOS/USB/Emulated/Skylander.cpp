@@ -1233,6 +1233,26 @@ bool SkylanderPortal::RemoveSkylander(u8 sky_num)
   return false;
 }
 
+bool SkylanderPortal::RemoveSkylander(u8 sky_num, bool always_remove)
+{
+  if (!IsSkylanderNumberValid(sky_num))
+    return false;
+
+  DEBUG_LOG_FMT(IOS_USB, "Cleared Skylander from slot {}", sky_num);
+  std::lock_guard lock(sky_mutex);
+  auto& skylander = skylanders[sky_num];
+
+  if (skylander.status & 1 || always_remove)
+  {
+    skylander.status = Skylander::REMOVING;
+    skylander.queued_status.push(Skylander::REMOVING);
+    skylander.queued_status.push(Skylander::REMOVED);
+    return true;
+  }
+
+  return false;
+}
+
 u8 SkylanderPortal::LoadSkylanderPath(std::string file_name)
 {
   File::IOFile sky_file(file_name, "r+b");

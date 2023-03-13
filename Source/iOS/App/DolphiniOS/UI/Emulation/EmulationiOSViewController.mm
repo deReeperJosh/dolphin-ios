@@ -22,7 +22,6 @@
 #import "EmulationCoordinator.h"
 #import "HostNotifications.h"
 #import "LocalizationUtil.h"
-#import "Skylander.h"
 #import "VirtualMFiControllerManager.h"
 
 typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
@@ -179,7 +178,7 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
         }];
         UIAlertAction* clearAction = [UIAlertAction actionWithTitle:@"Clear" style:UIAlertActionStyleDefault
                                                        handler:^(UIAlertAction * action) {
-            system.GetSkylanderPortal().RemoveSkylander(self.skylanderSlot);
+            system.GetSkylanderPortal().RemoveSkylander(self.skylanderSlot, true);
             if (self.skylanderSlot != 0) {
                 self.skylanderSlot--;
             }

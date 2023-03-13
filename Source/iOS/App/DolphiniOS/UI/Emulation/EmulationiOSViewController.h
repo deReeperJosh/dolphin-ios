@@ -3,8 +3,6 @@
 
 #import "EmulationViewController.h"
 
-#import "Skylander.h"
-
 #import "Swift.h"
 
 NS_ASSUME_NONNULL_BEGIN
