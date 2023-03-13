@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (strong, nonatomic) IBOutletCollection(TCView) NSArray* touchPads;
 
-@property (nonatomic) NSMutableArray<Skylander*>* skylanders;
+@property unsigned int skylanderSlot;
 
 @end
 

@@ -1233,6 +1233,23 @@ bool SkylanderPortal::RemoveSkylander(u8 sky_num)
   return false;
 }
 
+u8 SkylanderPortal::LoadSkylanderPath(std::string file_name)
+{
+  File::IOFile sky_file(file_name, "r+b");
+  if (!sky_file)
+  {
+    return 0xFF;
+  }
+  std::array<u8, 0x40 * 0x10> file_data;
+  if (!sky_file.ReadBytes(file_data.data(), file_data.size()))
+  {
+    return 0xFF;
+  }
+
+  return Core::System::GetInstance().GetSkylanderPortal().LoadSkylander(file_data.data(),
+                                                                        std::move(sky_file));
+}
+
 u8 SkylanderPortal::LoadSkylander(u8* buf, File::IOFile in_file)
 {
   std::lock_guard lock(sky_mutex);

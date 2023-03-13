@@ -96,6 +96,7 @@ public:
   bool CreateSkylander(const std::string& file_path, u16 sky_id, u16 sky_var);
   bool RemoveSkylander(u8 sky_num);
   u8 LoadSkylander(u8* buf, File::IOFile in_file);
+  u8 LoadSkylanderPath(std::string file_name);
   std::pair<u16, u16> CalculateIDs(const std::array<u8, 0x40 * 0x10>& file_data);
 
 protected:

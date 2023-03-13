@@ -163,44 +163,29 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Skylanders Manager"
                                        message:nil
                                        preferredStyle:UIAlertControllerStyleAlert];
-        auto& portal = Core::System::GetInstance().GetSkylanderPortal();
-        for (int i = 0; i < 8; i++) {
-            NSString *slotString = [NSString stringWithFormat:@"Slot %d", i];
-            UIAlertAction* action = [UIAlertAction actionWithTitle:slotString style:UIAlertActionStyleDefault
-               handler:^(UIAlertAction * action) {
-                UIAlertController* slotAlert = [UIAlertController alertControllerWithTitle:slotString
-                                               message:nil
-                                               preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction* loadAction = [UIAlertAction actionWithTitle:@"Load" style:UIAlertActionStyleDefault
-                                                               handler:^(UIAlertAction * action) {
-                    NSArray<UTType*>* types = @[
-                        [UTType exportedTypeWithIdentifier:@"me.oatmealdome.dolphinios.skylander-dumps"]
-                      ];
-                    UIDocumentPickerViewController* pickerController = [[UIDocumentPickerViewController alloc] initForOpeningContentTypes:types];
-                    pickerController.delegate = self;
-                    pickerController.modalPresentationStyle = UIModalPresentationPageSheet;
-                    pickerController.allowsMultipleSelection = false;
-                    
-                    [self presentViewController:pickerController animated:true completion:nil];
-                    
-                }];
-                UIAlertAction* createAction = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDefault
-                                                               handler:^(UIAlertAction * action) {
-                    
-                }];
-                UIAlertAction* clearAction = [UIAlertAction actionWithTitle:@"Clear" style:UIAlertActionStyleDefault
-                                                               handler:^(UIAlertAction * action) {
-                    portal.RemoveSkylander([self->_skylanders objectAtIndex:i].portalSlot);
-                    self.skylanders[i] = [[Skylander alloc] init];
-                }];
-                [slotAlert addAction:createAction];
-                [slotAlert addAction:clearAction];
-                [slotAlert addAction:loadAction];
-                [self presentViewController:slotAlert animated:YES completion:nil];
-               }];
-             
-            [alert addAction:action];
-        }
+        auto& system = Core::System::GetInstance();
+        UIAlertAction* loadAction = [UIAlertAction actionWithTitle:@"Load" style:UIAlertActionStyleDefault
+                                                       handler:^(UIAlertAction * action) {
+            NSArray<UTType*>* types = @[
+                [UTType exportedTypeWithIdentifier:@"me.oatmealdome.dolphinios.skylander-dumps"]
+              ];
+            UIDocumentPickerViewController* pickerController = [[UIDocumentPickerViewController alloc] initForOpeningContentTypes:types];
+            pickerController.delegate = self;
+            pickerController.modalPresentationStyle = UIModalPresentationPageSheet;
+            pickerController.allowsMultipleSelection = false;
+            
+            [self presentViewController:pickerController animated:true completion:nil];
+            
+        }];
+        UIAlertAction* clearAction = [UIAlertAction actionWithTitle:@"Clear" style:UIAlertActionStyleDefault
+                                                       handler:^(UIAlertAction * action) {
+            system.GetSkylanderPortal().RemoveSkylander(self.skylanderSlot);
+            if (self.skylanderSlot != 0) {
+                self.skylanderSlot--;
+            }
+        }];
+        [alert addAction:loadAction];
+        [alert addAction:clearAction];
         [self presentViewController:alert animated:YES completion:nil];
     }]
     ]]
@@ -349,7 +334,12 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
 }
 
 - (void)documentPicker:(UIDocumentPickerViewController*)controller didPickDocumentsAtURLs:(NSArray<NSURL*>*)urls {
-  
+    auto& system = Core::System::GetInstance();
+    NSString* sourcePath = [urls[0] path];
+    NSLog(@"%@", sourcePath);
+    int slot = system.GetSkylanderPortal().LoadSkylanderPath(std::string([sourcePath UTF8String]));
+    NSLog(@"%d", slot);
+    self.skylanderSlot = slot;
 }
 
 @end
