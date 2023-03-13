@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #import "EmulationiOSViewController.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 #import "Core/ConfigManager.h"
 #import "Core/Config/MainSettings.h"
@@ -10,7 +11,9 @@
 #import "Core/HW/SI/SI_Device.h"
 #import "Core/HW/Wiimote.h"
 #import "Core/HW/WiimoteEmu/WiimoteEmu.h"
+#import "Core/IOS/USB/Emulated/Skylander.h"
 #import "Core/State.h"
+#import "Core/System.h"
 
 #import "InputCommon/InputConfig.h"
 
@@ -19,6 +22,7 @@
 #import "EmulationCoordinator.h"
 #import "HostNotifications.h"
 #import "LocalizationUtil.h"
+#import "Skylander.h"
 #import "VirtualMFiControllerManager.h"
 
 typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
@@ -156,7 +160,48 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
     [UIMenu menuWithTitle:DOLCoreLocalizedString(@"Tools") image:nil identifier:nil options:UIMenuOptionsDisplayInline
                  children:@[
         [UIAction actionWithTitle:DOLCoreLocalizedString(@"Skylanders Portal") image:[UIImage systemImageNamed:@"externalDrive"] identifier:nil handler:^(UIAction*) {
-        
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Skylanders Manager"
+                                       message:nil
+                                       preferredStyle:UIAlertControllerStyleAlert];
+        auto& portal = Core::System::GetInstance().GetSkylanderPortal();
+        for (int i = 0; i < 8; i++) {
+            NSString *slotString = [NSString stringWithFormat:@"Slot %d", i];
+            UIAlertAction* action = [UIAlertAction actionWithTitle:slotString style:UIAlertActionStyleDefault
+               handler:^(UIAlertAction * action) {
+                UIAlertController* slotAlert = [UIAlertController alertControllerWithTitle:slotString
+                                               message:nil
+                                               preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* loadAction = [UIAlertAction actionWithTitle:@"Load" style:UIAlertActionStyleDefault
+                                                               handler:^(UIAlertAction * action) {
+                    NSArray<UTType*>* types = @[
+                        [UTType exportedTypeWithIdentifier:@"me.oatmealdome.dolphinios.skylander-dumps"]
+                      ];
+                    UIDocumentPickerViewController* pickerController = [[UIDocumentPickerViewController alloc] initForOpeningContentTypes:types];
+                    pickerController.delegate = self;
+                    pickerController.modalPresentationStyle = UIModalPresentationPageSheet;
+                    pickerController.allowsMultipleSelection = false;
+                    
+                    [self presentViewController:pickerController animated:true completion:nil];
+                    
+                }];
+                UIAlertAction* createAction = [UIAlertAction actionWithTitle:@"Create" style:UIAlertActionStyleDefault
+                                                               handler:^(UIAlertAction * action) {
+                    
+                }];
+                UIAlertAction* clearAction = [UIAlertAction actionWithTitle:@"Clear" style:UIAlertActionStyleDefault
+                                                               handler:^(UIAlertAction * action) {
+                    portal.RemoveSkylander([self->_skylanders objectAtIndex:i].portalSlot);
+                    self.skylanders[i] = [[Skylander alloc] init];
+                }];
+                [slotAlert addAction:createAction];
+                [slotAlert addAction:clearAction];
+                [slotAlert addAction:loadAction];
+                [self presentViewController:slotAlert animated:YES completion:nil];
+               }];
+             
+            [alert addAction:action];
+        }
+        [self presentViewController:alert animated:YES completion:nil];
     }]
     ]]
   ]];
@@ -301,6 +346,10 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
   }
   
   [[TCDeviceMotion shared] setMotionEnabled:false];
+}
+
+- (void)documentPicker:(UIDocumentPickerViewController*)controller didPickDocumentsAtURLs:(NSArray<NSURL*>*)urls {
+  
 }
 
 @end

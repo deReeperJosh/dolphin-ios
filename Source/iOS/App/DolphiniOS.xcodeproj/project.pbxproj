@@ -170,6 +170,7 @@
 		B9FCB7E12898D1E80020E233 /* SwiftLocalizationUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9FCB7E02898D1E80020E233 /* SwiftLocalizationUtil.swift */; };
 		B9FCB7E42898F4D60020E233 /* JitManager+JitStreamer.m in Sources */ = {isa = PBXBuildFile; fileRef = B9FCB7E32898F4D60020E233 /* JitManager+JitStreamer.m */; };
 		B9FCB7E62898FAC10020E233 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9FCB7E52898FAC10020E233 /* GameController.framework */; };
+		C657B29629BEFE4800155BF5 /* Skylander.m in Sources */ = {isa = PBXBuildFile; fileRef = C657B29529BEFE4800155BF5 /* Skylander.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -498,6 +499,8 @@
 		B9FF01E72977DCBE00B49B00 /* TrollStore.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TrollStore.xcconfig; sourceTree = "<group>"; };
 		B9FF01E82977DCF700B49B00 /* Release (TrollStore).xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Release (TrollStore).xcconfig"; sourceTree = "<group>"; };
 		B9FF01E92977DD0000B49B00 /* Release (Beta, TrollStore).xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Release (Beta, TrollStore).xcconfig"; sourceTree = "<group>"; };
+		C657B29429BEFB7300155BF5 /* Skylander.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Skylander.h; sourceTree = "<group>"; };
+		C657B29529BEFE4800155BF5 /* Skylander.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Skylander.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -614,6 +617,7 @@
 		B900A7C427F4D4DE000361DD /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				C657B29329BEFB6200155BF5 /* Skylanders */,
 				B950CFB3296179BD00197719 /* BootNotice */,
 				B9D9389B283ECF0B00B290FC /* Controls */,
 				B9D93890283DE62700B290FC /* Emulation */,
@@ -1488,6 +1492,15 @@
 			path = Alert;
 			sourceTree = "<group>";
 		};
+		C657B29329BEFB6200155BF5 /* Skylanders */ = {
+			isa = PBXGroup;
+			children = (
+				C657B29429BEFB7300155BF5 /* Skylander.h */,
+				C657B29529BEFE4800155BF5 /* Skylander.m */,
+			);
+			path = Skylanders;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1824,6 +1837,7 @@
 				B9D9388C283DD86100B290FC /* EmulationBootParameter.mm in Sources */,
 				B9EC1A43295FFFD30013EBE4 /* SoftwareListiOSViewController.mm in Sources */,
 				B904AD1228886B0D008B6BE9 /* MappingRootExtensionCell.m in Sources */,
+				C657B29629BEFE4800155BF5 /* Skylander.m in Sources */,
 				B99137982881D68600588446 /* CpuEngineViewController.mm in Sources */,
 				B9B2C5E2288D0A9800CB6569 /* MappingLoadProfileViewController.mm in Sources */,
 				B99137C928832A0800588446 /* LocalizationUtil.m in Sources */,
@@ -2406,6 +2420,7 @@
 				CODE_SIGN_ENTITLEMENTS = DolphiniOS/DolphiniOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 82F93352SB;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DolphiniOS/Info.plist;
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
@@ -2439,6 +2454,7 @@
 				CODE_SIGN_ENTITLEMENTS = DolphiniOS/DolphiniOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 82F93352SB;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DolphiniOS/Info.plist;
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
