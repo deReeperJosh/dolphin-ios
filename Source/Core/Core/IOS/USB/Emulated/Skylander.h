@@ -94,10 +94,10 @@ public:
   void WriteBlock(u8 sky_num, u8 block, const u8* to_write_buf, u8* reply_buf);
 
   bool CreateSkylander(const std::string& file_path, u16 sky_id, u16 sky_var);
+  bool RemoveSkylanderiOS(u8 sky_num);
   bool RemoveSkylander(u8 sky_num);
-  bool RemoveSkylander(u8 sky_num, bool always_remove);
+  u8 LoadSkylanderiOS(u8* buf, File::IOFile in_file);
   u8 LoadSkylander(u8* buf, File::IOFile in_file);
-  u8 LoadSkylanderPath(std::string file_name);
   std::pair<u16, u16> CalculateIDs(const std::array<u8, 0x40 * 0x10>& file_data);
 
 protected:

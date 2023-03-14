@@ -4,6 +4,8 @@
 #import "EmulationiOSViewController.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
+#include "Common/IOFile.h"
+
 #import "Core/ConfigManager.h"
 #import "Core/Config/MainSettings.h"
 #import "Core/Config/WiimoteSettings.h"
@@ -162,7 +164,6 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Skylanders Manager"
                                        message:nil
                                        preferredStyle:UIAlertControllerStyleAlert];
-        auto& system = Core::System::GetInstance();
         UIAlertAction* loadAction = [UIAlertAction actionWithTitle:@"Load" style:UIAlertActionStyleDefault
                                                        handler:^(UIAlertAction * action) {
             NSArray<UTType*>* types = @[
@@ -178,8 +179,9 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
         }];
         UIAlertAction* clearAction = [UIAlertAction actionWithTitle:@"Clear" style:UIAlertActionStyleDefault
                                                        handler:^(UIAlertAction * action) {
-            system.GetSkylanderPortal().RemoveSkylander(self.skylanderSlot, true);
-            if (self.skylanderSlot != 0) {
+            auto& system = Core::System::GetInstance();
+            bool removed = system.GetSkylanderPortal().RemoveSkylanderiOS(self.skylanderSlot);
+            if (removed && self.skylanderSlot != 0) {
                 self.skylanderSlot--;
             }
         }];
@@ -333,12 +335,41 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
 }
 
 - (void)documentPicker:(UIDocumentPickerViewController*)controller didPickDocumentsAtURLs:(NSArray<NSURL*>*)urls {
-    auto& system = Core::System::GetInstance();
     NSString* sourcePath = [urls[0] path];
-    NSLog(@"%@", sourcePath);
-    int slot = system.GetSkylanderPortal().LoadSkylanderPath(std::string([sourcePath UTF8String]));
-    NSLog(@"%d", slot);
-    self.skylanderSlot = slot;
+    std::string path = std::string([sourcePath UTF8String]);
+    File::IOFile sky_file(path, "r+b");
+    if (!sky_file)
+    {
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Failed to Open Skylander File!"
+                                       message:nil
+                                       preferredStyle:UIAlertControllerStyleAlert];
+        [self presentViewController:alert animated:YES completion:nil];
+        return;
+    }
+    NSLog(@"Opened");
+    std::array<u8, 0x40 * 0x10> file_data;
+    if (!sky_file.ReadBytes(file_data.data(), file_data.size()))
+    {
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Failed to Read Skylander File!"
+                                       message:nil
+                                       preferredStyle:UIAlertControllerStyleAlert];
+        [self presentViewController:alert animated:YES completion:nil];
+        return;
+    }
+    NSLog(@"Read");
+    auto& system = Core::System::GetInstance();
+    std::pair<u16, u16> id_var = system.GetSkylanderPortal().CalculateIDs(file_data);
+    u8 portal_slot = system.GetSkylanderPortal().LoadSkylanderiOS(file_data.data(), std::move(sky_file));
+    if (portal_slot == 0xFF)
+    {
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Failed to Load Skylander File!"
+                                       message:nil
+                                       preferredStyle:UIAlertControllerStyleAlert];
+        [self presentViewController:alert animated:YES completion:nil];
+        return;
+    }
+    NSLog(@"Loaded");
+    self.skylanderSlot = portal_slot;
 }
 
 @end

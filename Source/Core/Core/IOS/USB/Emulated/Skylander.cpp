@@ -1213,6 +1213,11 @@ bool SkylanderPortal::CreateSkylander(const std::string& file_path, u16 sky_id, 
   return true;
 }
 
+bool SkylanderPortal::RemoveSkylanderiOS(u8 sky_num)
+{
+  return Core::System::GetInstance().GetSkylanderPortal().RemoveSkylander(sky_num);
+}
+
 bool SkylanderPortal::RemoveSkylander(u8 sky_num)
 {
   if (!IsSkylanderNumberValid(sky_num))
@@ -1233,41 +1238,9 @@ bool SkylanderPortal::RemoveSkylander(u8 sky_num)
   return false;
 }
 
-bool SkylanderPortal::RemoveSkylander(u8 sky_num, bool always_remove)
+u8 SkylanderPortal::LoadSkylanderiOS(u8* buf, File::IOFile in_file)
 {
-  if (!IsSkylanderNumberValid(sky_num))
-    return false;
-
-  DEBUG_LOG_FMT(IOS_USB, "Cleared Skylander from slot {}", sky_num);
-  std::lock_guard lock(sky_mutex);
-  auto& skylander = skylanders[sky_num];
-
-  if (skylander.status & 1 || always_remove)
-  {
-    skylander.status = Skylander::REMOVING;
-    skylander.queued_status.push(Skylander::REMOVING);
-    skylander.queued_status.push(Skylander::REMOVED);
-    return true;
-  }
-
-  return false;
-}
-
-u8 SkylanderPortal::LoadSkylanderPath(std::string file_name)
-{
-  File::IOFile sky_file(file_name, "r+b");
-  if (!sky_file)
-  {
-    return 0xFF;
-  }
-  std::array<u8, 0x40 * 0x10> file_data;
-  if (!sky_file.ReadBytes(file_data.data(), file_data.size()))
-  {
-    return 0xFF;
-  }
-
-  return Core::System::GetInstance().GetSkylanderPortal().LoadSkylander(file_data.data(),
-                                                                        std::move(sky_file));
+  return Core::System::GetInstance().GetSkylanderPortal().LoadSkylander(buf, std::move(in_file));
 }
 
 u8 SkylanderPortal::LoadSkylander(u8* buf, File::IOFile in_file)
