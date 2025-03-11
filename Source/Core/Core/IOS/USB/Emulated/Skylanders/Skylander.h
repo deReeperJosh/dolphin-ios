@@ -142,7 +142,7 @@ public:
 
   bool RemoveSkylanderiOS(u8 sky_num);
   bool RemoveSkylander(u8 sky_num);
-  u8 LoadSkylanderiOS(u8* buf, File::IOFile in_file);
+  u8 LoadSkylanderiOS(File::IOFile in_file);
   u8 LoadSkylander(std::unique_ptr<SkylanderFigure> figure);
   Skylander* GetSkylander(u8 slot);
   std::pair<u16, u16> CalculateIDs(const std::array<u8, 0x40 * 0x10>& file_data);
