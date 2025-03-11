@@ -247,16 +247,20 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
         UIAlertAction* clearAction = [UIAlertAction actionWithTitle:@"Clear" style:UIAlertActionStyleDefault
                                                        handler:^(UIAlertAction* action) {
             auto& system = Core::System::GetInstance();
-            bool removed = system.GetSkylanderPortal().RemoveSkylanderiOS(self.skylanderSlot);
-            if (removed && self.skylanderSlot != 0) {
-                self.skylanderSlot--;
+            if (self.skylanderSlot) {
+              bool removed = system.GetSkylanderPortal().RemoveSkylander(self.skylanderSlot - 1);
+              if (removed && self.skylanderSlot != 0) {
+                  self.skylanderSlot--;
+              }
             }
         }];
         UIAlertAction* clearAllAction = [UIAlertAction actionWithTitle:@"Clear All" style:UIAlertActionStyleDefault
                                                        handler:^(UIAlertAction* action) {
             auto& system = Core::System::GetInstance();
-            for (int i = 0; i < 16; i++) {
-                system.GetSkylanderPortal().RemoveSkylanderiOS(i);
+            if (self.skylanderSlot) {
+              for (int i = 0; i < 16; i++) {
+                  system.GetSkylanderPortal().RemoveSkylander(i);
+              }
             }
             self.skylanderSlot = 0;
         }];
@@ -469,7 +473,7 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
     }
     auto& system = Core::System::GetInstance();
     std::pair<u16, u16> id_var = system.GetSkylanderPortal().CalculateIDs(file_data);
-    u8 portal_slot = system.GetSkylanderPortal().LoadSkylanderiOS(std::move(sky_file));
+    u8 portal_slot = system.GetSkylanderPortal().LoadSkylander(std::make_unique<IOS::HLE::USB::SkylanderFigure>(std::move(sky_file)));
     if (portal_slot == 0xFF)
     {
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Failed to Load Skylander File!"
@@ -478,7 +482,7 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
         [self presentViewController:alert animated:YES completion:nil];
         return;
     }
-    self.skylanderSlot = portal_slot;
+    self.skylanderSlot = portal_slot + 1;
 }
 
 @end
