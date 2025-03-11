@@ -205,27 +205,29 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
 
   UIAction* selectedSlotElement = (UIAction*)[stateSlotActions objectAtIndex:Config::GetBase(Config::MAIN_SELECTED_STATE_SLOT) - 1];
   selectedSlotElement.state = UIMenuElementStateOn;
+  
+  NSMutableArray<UIMenuElement*>* menuItems = [[NSMutableArray alloc] init];
+  [menuItems addObject:[UIMenu menuWithTitle:DOLCoreLocalizedString(@"Controllers") image:nil identifier:nil options:UIMenuOptionsDisplayInline children:controllerActions]];
+  [menuItems addObject:[UIMenu menuWithTitle:DOLCoreLocalizedString(@"Save State") image:nil identifier:nil options:UIMenuOptionsDisplayInline children:@[
+    [UIMenu menuWithTitle:DOLCoreLocalizedString(@"Select State Slot") image:nil identifier:nil options:0 children:stateSlotActions],
+    [UIAction actionWithTitle:DOLCoreLocalizedString(@"Load State") image:[UIImage systemImageNamed:@"tray.and.arrow.down"] identifier:nil handler:^(UIAction*) {
+      DOLHostQueueRunAsync(^{
+        State::Load(Core::System::GetInstance(), self->_stateSlot);
+      });
 
-  self.navigationItem.leftBarButtonItem.menu = [UIMenu menuWithChildren:@[
-    [UIMenu menuWithTitle:DOLCoreLocalizedString(@"Controllers") image:nil identifier:nil options:UIMenuOptionsDisplayInline children:controllerActions],
-    [UIMenu menuWithTitle:DOLCoreLocalizedString(@"Save State") image:nil identifier:nil options:UIMenuOptionsDisplayInline children:@[
-      [UIMenu menuWithTitle:DOLCoreLocalizedString(@"Select State Slot") image:nil identifier:nil options:0 children:stateSlotActions],
-      [UIAction actionWithTitle:DOLCoreLocalizedString(@"Load State") image:[UIImage systemImageNamed:@"tray.and.arrow.down"] identifier:nil handler:^(UIAction*) {
-        DOLHostQueueRunAsync(^{
-          State::Load(Core::System::GetInstance(), self->_stateSlot);
-        });
+      [self.navigationController setNavigationBarHidden:true animated:true];
+    }],
+    [UIAction actionWithTitle:DOLCoreLocalizedString(@"Save State") image:[UIImage systemImageNamed:@"tray.and.arrow.up"] identifier:nil handler:^(UIAction*) {
+      DOLHostQueueRunAsync(^{
+        State::Save(Core::System::GetInstance(), self->_stateSlot);
+      });
 
-        [self.navigationController setNavigationBarHidden:true animated:true];
-      }],
-      [UIAction actionWithTitle:DOLCoreLocalizedString(@"Save State") image:[UIImage systemImageNamed:@"tray.and.arrow.up"] identifier:nil handler:^(UIAction*) {
-        DOLHostQueueRunAsync(^{
-          State::Save(Core::System::GetInstance(), self->_stateSlot);
-        });
-
-        [self.navigationController setNavigationBarHidden:true animated:true];
-      }]
-    ]],
-    [UIMenu menuWithTitle:DOLCoreLocalizedString(@"Tools") image:nil identifier:nil options:UIMenuOptionsDisplayInline
+      [self.navigationController setNavigationBarHidden:true animated:true];
+    }]
+  ]]];
+  
+  if ([self emulateSkylanderPortal]) {
+    [menuItems addObject:[UIMenu menuWithTitle:DOLCoreLocalizedString(@"Tools") image:nil identifier:nil options:UIMenuOptionsDisplayInline
                  children:@[
         [UIAction actionWithTitle:DOLCoreLocalizedString(@"Skylanders Portal") image:[UIImage systemImageNamed:@"externalDrive"] identifier:nil handler:^(UIAction*) {
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Skylanders Manager"
@@ -269,8 +271,10 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
         [alert addAction:clearAllAction];
         [self presentViewController:alert animated:YES completion:nil];
     }]
-    ]]
-  ]];
+    ]]];
+  }
+
+  self.navigationItem.leftBarButtonItem.menu = [UIMenu menuWithChildren:menuItems];
 }
 
 - (void)viewDidLayoutSubviews {

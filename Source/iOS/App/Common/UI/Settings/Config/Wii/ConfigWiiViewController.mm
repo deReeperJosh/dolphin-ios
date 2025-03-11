@@ -28,6 +28,7 @@
 
   self.wc24Switch.on = Config::Get(Config::MAIN_WII_WIILINK_ENABLE);
   [self.wc24Switch addValueChangedTarget:self action:@selector(wc24Changed)];
+
   self.skylanderPortalSwitch.on = Config::Get(Config::MAIN_EMULATE_SKYLANDER_PORTAL);
   [self.skylanderPortalSwitch addValueChangedTarget:self action:@selector(skylanderPortalChanged)];
 
