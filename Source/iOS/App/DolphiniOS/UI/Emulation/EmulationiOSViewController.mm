@@ -226,7 +226,7 @@ typedef NS_ENUM(NSInteger, DOLEmulationVisibleTouchPad) {
     }]
   ]]];
   
-  if ([self emulateSkylanderPortal]) {
+  if ([self emulateSkylanderPortal] && Core::System::GetInstance().IsWii()) {
     [menuItems addObject:[UIMenu menuWithTitle:DOLCoreLocalizedString(@"Tools") image:nil identifier:nil options:UIMenuOptionsDisplayInline
                  children:@[
         [UIAction actionWithTitle:DOLCoreLocalizedString(@"Skylanders Portal") image:[UIImage systemImageNamed:@"externalDrive"] identifier:nil handler:^(UIAction*) {
